@@ -6,33 +6,32 @@
 
 ## Idiomas:
 <p align="center">
-  <a href="README.md" style="display: inline-block; padding: 10px 20px; font-size: 16px; text-align: center; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">English</a>
+  <a href="README.pt.md" style="display: inline-block; padding: 10px 20px; font-size: 16px; text-align: center; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Português</a>
 </p>
 
 ---
+# Fracture Identifier in Upper Limbs
 
- # Identificador de Fraturas em Membros Superiores
+## Project Objective
 
-## Objetivo do Projeto
+This project aims to develop a computer vision model capable of identifying bone fractures in the upper limbs from radiographic images. Initially, the approach adopted was a binary classification model to determine whether a fracture was present or not. As the project progressed, fracture detection using the YOLO model was implemented, enabling not only classification but also the exact location of the fracture in the image.
 
-Este projeto tem como objetivo desenvolver um modelo de visão computacional capaz de identificar fraturas ósseas nos membros superiores a partir de imagens radiográficas. Inicialmente, a abordagem adotada foi a de um modelo binário de classificação para determinar se uma fratura estava presente ou não. Com a evolução do projeto, foi implementada a detecção de fraturas utilizando o modelo YOLO, permitindo não apenas a classificação, mas também a localização exata da fratura na imagem.
+## Project Evolution
 
-## Evolução do Projeto
+### Phase 1: Binary Model
 
-### Fase 1: Modelo Binário
+In the first phase, a convolutional neural network (CNN) model was trained to perform binary fracture detection. The model was fed with a dataset of radiographic images classified into two categories:
 
-Na primeira fase, foi treinado um modelo de rede neural convolucional (CNN) para realizar a detecção binária de fraturas. O modelo foi alimentado com um conjunto de imagens radiográficas classificadas em duas categorias:
+- **With fracture**
+- **Without fracture**
 
-- **Com fratura**
-- **Sem fratura**
+From this model, it was possible to predict whether a new image contained a fracture or not. However, this approach had limitations as it did not provide information about the exact location of the fracture, making clinical interpretation difficult.
 
-A partir desse modelo, foi possível prever se uma nova imagem continha ou não uma fratura. No entanto, essa abordagem apresentava limitações, pois não fornecia informações sobre a localização exata da fratura, dificultando a interpretação clínica.
+### Phase 2: YOLO Implementation for Fracture Detection
 
-### Fase 2: Implementação do YOLO para Detecção de Fraturas
+To overcome the limitations of the initial approach, the second phase of the project involved transitioning to a **YOLO (You Only Look Once)** model, which allows for precise detection and localization of fractures in images.
 
-Para superar as limitações da abordagem inicial, a segunda fase do projeto envolveu a transição para um modelo **YOLO (You Only Look Once)**, que permite a detecção e localização precisa das fraturas nas imagens.
-
-Foi utilizado um novo conjunto de dados, encontrado no Kaggle, contendo imagens anotadas com as regiões de fratura. O dataset incluía três subdivisões (train, test, val) e possuía anotações para sete categorias de fraturas:
+A new dataset, found on Kaggle, containing annotated images with fracture regions, was used. The dataset included three subdivisions (`train`, `test`, `val`) and annotations for seven categories of fractures:
 
 - **Elbow Positive**
 - **Fingers Positive**
@@ -42,58 +41,58 @@ Foi utilizado um novo conjunto de dados, encontrado no Kaggle, contendo imagens 
 - **Shoulder Fracture**
 - **Wrist Positive**
 
-O treinamento do modelo YOLO foi realizado com essa base de dados, permitindo não apenas detectar a presença de fraturas, mas também localizar sua posição na imagem.
+The YOLO model was trained using this dataset, enabling it to not only detect the presence of fractures but also locate their position in the image.
 
-## Processo de Maturação
+## Maturation Process
 
-### 1. Preparação dos Dados
+### 1. Data Preparation
 
-Antes do treinamento, foi necessário realizar um pré-processamento das imagens para garantir a qualidade dos dados. Para isso, foi implementada uma função de pré-processamento utilizando a biblioteca **OpenCV**:
+Before training, it was necessary to preprocess the images to ensure the data's quality. A preprocessing function was implemented using the **OpenCV** library:
 
-python
+```python
 import cv2
 
 def preprocess_image(image_path):
     image = cv2.imread(image_path)
     if image is None:
-        print(f"Erro ao carregar a imagem: {image_path}")
+        print(f"Error loading image: {image_path}")
         return None
 
-    # Converter para escala de cinza
+    # Convert to grayscale
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
-    # Equalizar histograma para melhorar o contraste
+    # Histogram equalization to improve contrast
     equalized_image = cv2.equalizeHist(gray_image)
     
-    # Aplicar filtro de suavização para reduzir ruído
+    # Apply smoothing filter to reduce noise
     blurred_image = cv2.GaussianBlur(equalized_image, (5, 5), 0)
     
-    # Converter de volta para RGB para compatibilidade com YOLO
+    # Convert back to RGB for YOLO compatibility
     processed_image = cv2.cvtColor(blurred_image, cv2.COLOR_GRAY2BGR)
     
     return processed_image
+```
 
+### 2. YOLO Model Training
 
-### 2. Treinamento do Modelo YOLO
+The YOLO model was trained using the structured dataset, ensuring it learned to identify different types of bone fractures in the upper limbs. The training required adjustments to hyperparameters, including the number of epochs and batch size, to optimize accuracy without compromising inference speed.
 
-O modelo YOLO foi treinado utilizando a base de dados estruturada, garantindo que ele aprendesse a identificar diferentes tipos de fraturas ósseas nos membros superiores. O treinamento exigiu ajustes em hiperparâmetros, incluindo número de épocas e tamanho do batch, para otimizar a acurácia sem comprometer a velocidade de inferência.
+### 3. Detection and Classification Implementation
 
-### 3. Implementação da Detecção e Classificação
+With the trained model, it was possible to develop a pipeline that performs the following steps:
 
-Com o modelo treinado, foi possível desenvolver um pipeline que realiza as seguintes etapas:
+1. Image loading and preprocessing.
+2. Applying the YOLO model for fracture detection.
+3. Displaying the regions affected by fractures with bounding boxes.
+4. Displaying the name of the fracture class.
+5. If no fractures are detected, the image is classified as "no fracture."
 
-1. Carregamento e pré-processamento da imagem.
-2. Aplicação do modelo YOLO para detecção de fraturas.
-3. Exibição das regiões afetadas por fraturas com caixas delimitadoras (bounding boxes).
-4. Exibição do nome da classe correspondente à fratura.
-5. Se nenhuma fratura for detectada, a imagem é classificada como "sem fratura".
+## Conclusion and Next Steps
 
-## Conclusão e Próximos Passos
+The project evolved from simple binary classification to a robust system for detecting and localizing bone fractures in the upper limbs. Future improvements may include:
 
-O projeto evoluiu de uma simples classificação binária para um sistema robusto de detecção e localização de fraturas ósseas nos membros superiores. Futuras melhorias podem incluir:
+- Expanding the model to detect fractures in other parts of the body.
+- Enhancing the dataset with expert-annotated images.
+- Implementing a medical decision support system based on the model's detections.
 
-- Expansão do modelo para detectar fraturas em outras partes do corpo.
-- Aprimoramento da base de dados com imagens anotadas por especialistas.
-- Implementação de um sistema de apoio à decisão médica baseado nas detecções do modelo.
-
-Esse projeto representa um avanço significativo na utilização de visão computacional para suporte diagnóstico em radiologia, contribuindo para uma identificação mais precisa e rápida de fraturas ósseas.
+This project represents a significant advancement in the use of computer vision for diagnostic support in radiology, contributing to faster and more accurate identification of bone fractures.
