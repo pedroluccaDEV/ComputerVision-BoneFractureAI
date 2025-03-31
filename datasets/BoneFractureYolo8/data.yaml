@@ -1,0 +1,13 @@
+train: C:\Users\est.pedrolucca\Projetos\CompuerVison\bonefracture-ai\datasets\BoneFractureYolo8\train\images
+val: C:\Users\est.pedrolucca\Projetos\CompuerVison\bonefracture-ai\datasets\BoneFractureYolo8\valid\images
+test: C:\Users\est.pedrolucca\Projetos\CompuerVison\bonefracture-ai\datasets\BoneFractureYolo8\test\images
+
+nc: 7
+names: ['elbow positive', 'fingers positive', 'forearm fracture', 'humerus fracture', 'humerus', 'shoulder fracture', 'wrist positive']
+
+roboflow:
+  workspace: veda
+  project: bone-fracture-detection-daoon
+  version: 4
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/veda/bone-fracture-detection-daoon/dataset/4a

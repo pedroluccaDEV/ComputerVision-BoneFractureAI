@@ -1,0 +1,4 @@
+datasets\bonefracture-cnn
+datasets\BoneFractureYolo8\test
+datasets\BoneFractureYolo8\train
+datasets\BoneFractureYolo8\valid
